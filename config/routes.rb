@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :wikis
   get 'home/index'
   devise_for :users
   devise_for :models
