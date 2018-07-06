@@ -1,10 +1,17 @@
 class WikisController < ApplicationController
+
+  include Pundit
+  after_action :verify_authorized, except: [:home]
+  
   def index
     @wikis = Wiki.all
+    @wikis = policy_scope(Wiki)
   end
 
   def show
     @wiki = Wiki.find(params[:id])
+    @wiki = policy_scope(Wiki).find(params[:id])
+
   end
 
   def new
