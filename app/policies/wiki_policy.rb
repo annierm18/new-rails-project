@@ -1,22 +1,33 @@
 
 
 class WikiPolicy < ApplicationPolicy
-  attr_reader :user, :wiki
+  class Scope < Scope
+  attr_reader :user, :scope
 
-  def initialize(user, wiki)
+  def initialize(user, scope)
     @user = user
-    @wiki = wiki
+    @scope = scope
   end
 
-  def admin_list?
-    user.admin?
+  def standard_list?
+    user.standard?
+  end
+
+  def resolve
+      if user.standard?
+        scope.all
+      else
+        scope.where(published: true)
+      end
+    end
   end
 
   def update?
-    user.admin? or not record.published?
+    user.standard? or not wiki.published?
   end
 
+
   def destroy?
-   user.role == 'admin' || wiki.user == user
+   user.role == 'standard' || wiki.user == user
  end
 end

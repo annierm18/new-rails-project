@@ -47,7 +47,7 @@ class ApplicationPolicy
     end
 
     def resolve
-      if user.admin?
+      if user.standard?
         scope.all
       else
         scope.where(published: true)
@@ -55,7 +55,7 @@ class ApplicationPolicy
     end
 
     def update?
-      user.admin? or not record.published?
+      user.standard? or not wiki.published?
     end
   end
 end

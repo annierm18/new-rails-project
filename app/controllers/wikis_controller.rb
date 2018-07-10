@@ -1,9 +1,25 @@
 class WikisController < ApplicationController
+before_action :authorize_user, except: [:show, :new, :create]
 
   include Pundit
-  after_action :verify_authorized, except: [:home]
-  
+  after_action :verify_authorized, except: [:destroy]
+  after_action :verify_policy_scoped, only: [:user_wikis]
+
+  def user_wikis
+    @wikis = policy_scope(Wiki)
+  end
+
+  def authorize_user
+     wiki = Wiki.find(params[:id])
+ # #11
+     unless current_user == wiki.user || current_user.admin?
+       flash[:alert] = "You must be an admin to do that."
+       redirect_to [wiki.topic, wiki]
+     end
+   end
+
   def index
+    @wikis = WikiPolicy::Scope.new(current_user, Wiki).resolve
     @wikis = Wiki.all
     @wikis = policy_scope(Wiki)
   end
@@ -40,6 +56,13 @@ class WikisController < ApplicationController
        @wiki = Wiki.find(params[:id])
        @wiki.title = params[:wiki][:title]
        @wiki.body = params[:wiki][:body]
+
+       authorize @wiki
+       if @wiki.update(wiki_params)
+         redirect_to @wiki
+       else
+         render :edit
+       end
 
        if @wiki.save
          flash[:notice] = "Wiki was updated."
