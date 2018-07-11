@@ -1,5 +1,5 @@
 class WikisController < ApplicationController
-before_action :authorize_user, except: [:show, :new, :create]
+before_action :authorize_user, except: [:index, :show, :new, :create]
 
   include Pundit
   after_action :verify_authorized, except: [:destroy]
