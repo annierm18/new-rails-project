@@ -11,7 +11,7 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
 
   def authorize_user
      wiki = Wiki.find(params[:id])
- # #11
+
      unless current_user == wiki.user || current_user.admin?
        flash[:alert] = "You must be an admin to do that."
        redirect_to [wiki.topic, wiki]
