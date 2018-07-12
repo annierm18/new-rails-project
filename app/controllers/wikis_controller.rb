@@ -7,11 +7,12 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
 
   def user_wikis
     @wikis = policy_scope(Wiki)
+    @wiki = authorize Wiki.find(params[:id])
   end
 
   def authorize_user
-     wiki = Wiki.find(params[:id])
-
+     @wiki = authorize Wiki.find(params[:id])
+ # #11
      unless current_user == wiki.user || current_user.admin?
        flash[:alert] = "You must be an admin to do that."
        redirect_to [wiki.topic, wiki]
@@ -22,22 +23,24 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
     @wikis = WikiPolicy::Scope.new(current_user, Wiki).resolve
     @wikis = Wiki.all
     @wikis = policy_scope(Wiki)
+    @wiki = authorize Wiki.find(params[:id])
   end
 
   def show
-    @wiki = Wiki.find(params[:id])
+    @wiki = authorize Wiki.find(params[:id])
     @wiki = policy_scope(Wiki).find(params[:id])
-
   end
 
   def new
     @wiki = Wiki.new
+    @wiki = authorize Wiki.find(params[:id])
   end
 
   def create
     @wiki = Wiki.new
     @wiki.title = params[:wiki][:title]
     @wiki.body = params[:wiki][:body]
+    @wiki = authorize Wiki.find(params[:id])
 
     if @wiki.save
       flash[:notice] = "Wiki was saved."
@@ -49,7 +52,7 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
   end
 
   def edit
-    @wiki = Wiki.find(params[:id])
+    @wiki = authorize Wiki.find(params[:id])
   end
 
   def update
@@ -74,7 +77,7 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
      end
 
      def destroy
-     @wiki = Wiki.find(params[:id])
+     @wiki = authorize Wiki.find(params[:id])
 
      if @wiki.destroy
        flash[:notice] = "\"#{@wiki.title}\" was deleted successfully."
@@ -84,5 +87,12 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
        render :show
      end
    end
+
+  def publish
+    @wiki = Wiki.find(params[:id])
+    authorize @wiki, :update?
+    @wiki.publish!
+    redirect_to @wiki
+  end
 
 end
