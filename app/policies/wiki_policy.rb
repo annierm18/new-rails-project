@@ -22,10 +22,6 @@ class WikiPolicy < ApplicationPolicy
     end
   end
 
-  def update?
-    user.standard? or not wiki.published?
-  end
-
 
   def destroy?
    user.role == 'standard' || wiki.user == user
