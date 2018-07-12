@@ -1,18 +1,18 @@
 class WikisController < ApplicationController
 before_action :authorize_user, except: [:index, :show, :new, :create]
 
+
   include Pundit
   after_action :verify_authorized, except: [:destroy]
   after_action :verify_policy_scoped, only: [:user_wikis]
 
   def user_wikis
     @wikis = policy_scope(Wiki)
-    @wiki = authorize Wiki.find(params[:id])
+    authorize @wiki
   end
 
   def authorize_user
-     @wiki = authorize Wiki.find(params[:id])
- # #11
+     authorize @wiki
      unless current_user == wiki.user || current_user.admin?
        flash[:alert] = "You must be an admin to do that."
        redirect_to [wiki.topic, wiki]
@@ -23,24 +23,30 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
     @wikis = WikiPolicy::Scope.new(current_user, Wiki).resolve
     @wikis = Wiki.all
     @wikis = policy_scope(Wiki)
-    @wiki = authorize Wiki.find(params[:id])
+    authorize @wikis
   end
 
   def show
-    @wiki = authorize Wiki.find(params[:id])
     @wiki = policy_scope(Wiki).find(params[:id])
+    @user = authorize User.find(params[:id])
+      wiki = Wiki.find_by(attribute: "value")
+      if wiki.present?
+        authorize wiki
+      else
+        skip_authorization
+      end
   end
 
   def new
     @wiki = Wiki.new
-    @wiki = authorize Wiki.find(params[:id])
+    authorize @wiki
   end
 
   def create
-    @wiki = Wiki.new
+    @wiki = Wiki.new(wiki_params)
     @wiki.title = params[:wiki][:title]
     @wiki.body = params[:wiki][:body]
-    @wiki = authorize Wiki.find(params[:id])
+    authorize @wiki
 
     if @wiki.save
       flash[:notice] = "Wiki was saved."
@@ -52,7 +58,7 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
   end
 
   def edit
-    @wiki = authorize Wiki.find(params[:id])
+    authorize @wiki
   end
 
   def update
@@ -77,7 +83,7 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
      end
 
      def destroy
-     @wiki = authorize Wiki.find(params[:id])
+     authorize @wiki
 
      if @wiki.destroy
        flash[:notice] = "\"#{@wiki.title}\" was deleted successfully."
@@ -94,5 +100,14 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
     @wiki.publish!
     redirect_to @wiki
   end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_wiki
+      @wiki = Wiki.find(params[:id])
+      authorize @wiki
+    end
+
+    # Never trust parameters from the scary internet, only allow the white list through.
 
 end
