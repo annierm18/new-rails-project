@@ -1,12 +1,25 @@
-require 'random_data'
 
- # Create Wikis
+require 'faker'
+
+
+
+  5.times do
+    User.create!(
+      name: Faker::Name.unique.name,
+      email: Faker::Internet.unique.email,
+      password: Faker::Internet.unique.password
+    )
+  end
+  users = User.all
+
+
  50.times do
 
    Wiki.create!(
 
-     title:  RandomData.random_sentence,
-     body:   RandomData.random_paragraph
+    title: Faker::Title.unique.title,
+    body:  Faker::Body.unique.body
+
    )
  end
  wikis = Wiki.all
@@ -15,6 +28,7 @@ require 'random_data'
 
  puts "Seed finished"
  puts "#{Wiki.count} wikis created"
+ puts "#{User.count} user created"
 
 
 # This file should contain all the record creation needed to seed the database with its default values.
