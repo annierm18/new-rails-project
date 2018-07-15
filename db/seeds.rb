@@ -14,9 +14,9 @@ require 'faker'
 
 
  50.times do
-
    Wiki.create!(
-
+    user: users.sample,
+    topic: topics.sample,
     title: Faker::Title.unique.title,
     body:  Faker::Body.unique.body
 
@@ -24,7 +24,26 @@ require 'faker'
  end
  wikis = Wiki.all
 
+ admin = User.create!(
+   name:     'Admin User',
+   email:    'admin@example.com',
+   password: 'helloworld',
+   role:     'admin'
+ )
 
+ standard = User.create!(
+    name:     'Standard User',
+    email:    'standard@example.com',
+    password: 'helloworld',
+    role:     'standard'
+  )
+
+ premium = User.create!(
+   name:     'Premium User',
+   email:    'premium@example.com',
+   password: 'helloworld',
+   role: 'premium'
+ )
 
  puts "Seed finished"
  puts "#{Wiki.count} wikis created"
