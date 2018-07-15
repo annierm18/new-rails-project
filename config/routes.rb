@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   end
 
   resources :users, only: [:new, :create]
+  resources :charges_controller, only: [:new, :create]
+
   get 'home/index'
   devise_for :users
   devise_for :models
