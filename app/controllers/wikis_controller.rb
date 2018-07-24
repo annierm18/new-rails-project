@@ -1,9 +1,9 @@
 class WikisController < ApplicationController
-before_action :authorize_user, except: [:index, :show, :new, :create]
+
 
 
   include Pundit
-  after_action :verify_authorized, except: [:destroy]
+  after_action :verify_authorized, except: [:destroy, :show]
   after_action :verify_policy_scoped, only: [:user_wikis]
 
   def user_wikis
@@ -11,13 +11,7 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
     authorize @wiki
   end
 
-  def authorize_user
-     authorize @wiki
-     unless current_user == wiki.user || current_user.admin?
-       flash[:alert] = "You must be an admin to do that."
-       redirect_to [wiki.topic, wiki]
-     end
-   end
+
 
   def index
     @wikis = WikiPolicy::Scope.new(current_user, Wiki).resolve
@@ -28,13 +22,7 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
 
   def show
     @wiki = policy_scope(Wiki).find(params[:id])
-    @user = authorize User.find(params[:id])
-      wiki = Wiki.find_by(attribute: "value")
-      if wiki.present?
-        authorize wiki
-      else
-        skip_authorization
-      end
+    @user = current_user
   end
 
   def new
@@ -58,13 +46,14 @@ before_action :authorize_user, except: [:index, :show, :new, :create]
   end
 
   def edit
+    @wiki = Wiki.find(params[:id]) 
     authorize @wiki
   end
 
   def update
        @wiki = Wiki.find(params[:id])
-       @wiki.title = params[:wiki][:title]
-       @wiki.body = params[:wiki][:body]
+      # @wiki.title = params[:wiki][:title]
+      # @wiki.body = params[:wiki][:body]
 
        authorize @wiki
        if @wiki.update(wiki_params)

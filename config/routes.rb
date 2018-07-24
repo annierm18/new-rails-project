@@ -7,8 +7,11 @@ Rails.application.routes.draw do
     end
   end
 
+  get 'charges_controller/create'
+  get 'charges_controller/new'
+
   resources :users, only: [:new, :create]
-  resources :charges_controller, only: [:new, :create]
+  resources :charges_controller_controller, only: [:new, :create]
 
   get 'home/index'
   devise_for :users
