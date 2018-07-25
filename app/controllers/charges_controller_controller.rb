@@ -1,54 +1,52 @@
 class ChargesControllerController < ApplicationController
-
+skip_after_action :verify_policy_scoped, :only => :index
 
 
   def new
+    amount = 15.00
     @stripe_btn_data = {
     key: "#{ Rails.configuration.stripe[:publishable_key] }",
-    description: "BigMoney Membership - #{current_user.name}",
-    amount: Amount.default
+    description: "BigMoney Membership - #{current_user.email}",
+    amount: @amount
   }
   end
 
   def create
-      @amount = 15
-
-      @amount = @amount.gsub('$', '').gsub(',', '')
-
-      begin
-        @amount = Float(@amount).round(2)
-      rescue
-        flash[:error] = 'Charge not completed. Please enter a valid amount in USD ($).'
-        redirect_to new_charge_path
-        return
-      end
-
-      @amount = (@amount * 100).to_i # Must be an integer!
-
-      if @amount < 1500 || @amount > 1500
-        flash[:error] = 'Charge not completed. Donation amount must be $15.'
-        redirect_to new_charge_path
-        return
-      end
-
       customer = Stripe::Customer.create(
         email: current_user.email,
-        card: params[:stripeToken]
+        card: params[:stripeToken],
+        name: current_user.name
       )
 
       charge = Stripe::Charge.create(
         customer: customer.id,
-        amount: Amount.default,
-        description: "BigMoney Membership - #{current_user.email}",
+        amount: 15.00,
+        description: "Premium Membership - #{current_user.email}",
         currency: 'usd'
       )
 
-      flash[:notice] = "Thanks for all the money, #{current_user.email}! Feel free to pay me again."
+      current_user.update_attributes!(role: 'premium')
+
+      flash[:notice] = "Thanks for upgrading to a Premium Membership, #{current_user.email}! Feel free to pay me again."
       redirect_to user_path(current_user)
 
       rescue Stripe::CardError => e
         flash[:alert] = e.message
         redirect_to new_charge_path
       end
-  
+
+      def cancel_plan
+        @user = current_user
+        if @user.cancel_user_plan(params[:customer_id])
+          @user.update_attributes(customer_id: nil, plan_id: 1)
+          flash[:notice] = "Canceled subscription."
+          redirect_to root_path
+        else
+          flash[:error] = "There was an error canceling your subscription. Please notify us."
+          redirect_to edit_user_registration_path
+        end
+      end
+
+      current_user.update_attributes!(role: 'standard')
+
 end
