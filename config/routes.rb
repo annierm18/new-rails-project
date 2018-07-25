@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   get 'charges_controller/create'
   get 'charges_controller/new'
 
+  get '/cancel_plan' => 'charges_controllers#cancel_plan'
+
   resources :users, only: [:new, :create]
   resources :charges_controller_controller, only: [:new, :create]
 
