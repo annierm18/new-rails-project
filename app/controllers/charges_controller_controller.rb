@@ -35,18 +35,6 @@ skip_after_action :verify_policy_scoped, :only => :index
         redirect_to new_charge_path
       end
 
-      def cancel_plan
-        @user = current_user
-        if @user.cancel_user_plan(params[:customer_id])
-          @user.update_attributes(customer_id: nil, plan_id: 1)
-          flash[:notice] = "Canceled subscription."
-          redirect_to root_path
-        else
-          flash[:error] = "There was an error canceling your subscription. Please notify us."
-          redirect_to edit_user_registration_path
-        end
-      end
 
-      current_user.update_attributes!(role: 'standard')
 
 end

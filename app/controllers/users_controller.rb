@@ -24,6 +24,14 @@ class UsersController < ApplicationController
    @user = User.find(params[:id])
   end
 
+  def cancel_plan
+      @user == current_user
+      current_user.update_attributes!(role: 'standard')
+      flash[:notice] = "Canceled subscription."
+      redirect_to user_path(current_user)
+  end
+
+
   def create
     @user = User.new
     @user.name = params[:user][:name]
