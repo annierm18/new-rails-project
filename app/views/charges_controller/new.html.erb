@@ -4,5 +4,4 @@
     <script class='stripe-button' src="https://checkout.stripe.com/checkout.js" data-key="<%= @stripe_btn_data[:key] %>" data-amount="<%= @stripe_btn_data[:amount] %>" data-description="<%= @stripe_btn_data[:description] %>" ></script>
   <% end %>
 
-  <%= button_to "Cancel my Subscription", canceled_path, :data => { :confirm => "Are you sure?" }, :method => :delete, class: "btn btn-default btn-xs" %>
-<% end %>
+  <%= button_to "Cancel my Subscription", cancel_plan_path, :data => { :confirm => "Are you sure?" }, :method => :delete, class: "btn btn-default btn-xs" %>
