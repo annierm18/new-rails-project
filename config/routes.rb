@@ -7,13 +7,13 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'charges_controller/create'
-  get 'charges_controller/new'
+  get 'charges_controllers/create'
+  get 'charges_controllers/new'
 
-  get '/cancel_plan' => 'charges_controllers#cancel_plan'
+  get '/cancel_plan' => 'users#cancel_plan'
 
   resources :users, only: [:new, :create]
-  resources :charges_controller_controller, only: [:new, :create]
+  resources :charges_controllers, only: [:new, :create]
 
   get 'home/index'
   devise_for :users

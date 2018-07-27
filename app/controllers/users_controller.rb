@@ -31,6 +31,15 @@ class UsersController < ApplicationController
       redirect_to user_path(current_user)
   end
 
+  def user_params
+    if params[:private] = true
+      params.require(:user).permit(:name, :email, :password, :private, :password_confirmation, wikis_attributes: [:title, :body, :private])
+    else
+      params[:user][:wikis][:private] = false
+      params.require(:user).permit(:name, :email, :password, :password_confirmation, wikis_attributes: [:title, :body])
+    end
+  end
+
 
   def create
     @user = User.new
