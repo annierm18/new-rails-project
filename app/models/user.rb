@@ -5,6 +5,8 @@ class User < ApplicationRecord
 
 
     after_initialize :set_default_role
+    after_commit :downgrade_user_to_standard
+    after_commit :current_user_downgrade_wikis
 
     def public_wikis
         wikis.find(&:public?)
@@ -13,6 +15,16 @@ class User < ApplicationRecord
     def set_default_role
       self.role ||= :standard
     end
+
+    def downgrade_user_to_standard
+      current_user.update_attributes!(role: 'standard')
+    end
+
+    def current_user_downgrade_wikis
+      wiki.update_attribute(:private, false)
+      current_user.wiki.where(private: true).update_all(private: false)
+    end
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,

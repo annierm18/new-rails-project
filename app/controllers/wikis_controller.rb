@@ -12,7 +12,6 @@ class WikisController < ApplicationController
   end
 
 
-
   def index
     @wikis = Wiki.public.order("created_at desc").where(current_user.following_ids)
     @wikis = WikiPolicy::Scope.new(current_user, Wiki).resolve
@@ -59,11 +58,11 @@ class WikisController < ApplicationController
        authorize @wiki
        if @wiki.update(wiki_params)
          redirect_to @wiki
-       else
-         render :edit
-       end
+      # else
+      #   render :edit
+      # end
 
-       if @wiki.save
+    elsif @wiki.save
          flash[:notice] = "Wiki was updated."
          redirect_to @wiki
        else
@@ -91,7 +90,12 @@ class WikisController < ApplicationController
     redirect_to @wiki
   end
 
+
   private
+
+  def wiki_params
+    params.require(:wiki).permit(:title, :body)
+  end
     # Use callbacks to share common setup or constraints between actions.
     def set_wiki
       @wiki = Wiki.find(params[:id])
