@@ -1,14 +1,16 @@
 class Wiki < ApplicationRecord
   belongs_to :user, optional: true
-  before_commit :set_default_value
+  before_validation :set_default_value
 
   validates :title, length: { minimum: 5 }, presence: true
   validates :body, length: { minimum: 20 }, presence: true
   validates :user, presence: true
 
 
+private
+
   def set_default_value
-      attribute :private, default: false
+      self.private = false
   end
 
 

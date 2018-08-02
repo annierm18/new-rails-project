@@ -32,8 +32,7 @@ class WikisController < ApplicationController
 
   def create
     @wiki = Wiki.new(wiki_params)
-    @wiki.title = params[:wiki][:title]
-    @wiki.body = params[:wiki][:body]
+    @wiki = current_user
     authorize @wiki
 
     if @wiki.save
@@ -94,7 +93,12 @@ class WikisController < ApplicationController
   private
 
   def wiki_params
-    params.require(:wiki).permit(:title, :body)
+    if params[:private] = true
+      params.require(:wiki).permit(:title, :body, :private)
+    else
+      params[:wikis][:private] = false
+      params.require(:wiki).permit(:title, :body)
+    end
   end
     # Use callbacks to share common setup or constraints between actions.
     def set_wiki
