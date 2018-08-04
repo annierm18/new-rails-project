@@ -7,6 +7,8 @@ Rails.application.routes.draw do
     end
   end
 
+  devise_for :users, controllers: { registrations: "users/registrations" }
+
   get 'charges_controllers/create'
   get 'charges_controllers/new'
 
@@ -16,7 +18,7 @@ Rails.application.routes.draw do
   resources :charges_controllers, only: [:new, :create]
 
   get 'home/index'
-  devise_for :users
+  #devise_for :users
   devise_for :models
   root to: "home#index"
   root to: 'wikis#index'

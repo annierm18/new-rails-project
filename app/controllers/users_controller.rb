@@ -26,8 +26,17 @@ class UsersController < ApplicationController
 
   def cancel_plan
       @user == current_user
-      downgrade_user_to_standard
+      def downgrade_user_to_standard
+        current_user.update_attributes!(role: 'standard')
+      end
+
+      def current_user_downgrade_wikis
+        wikis.update_attributes(:private, false)
+        current_user.wikis.where(private: true).update_all(private: false)
+      end
+
       current_user_downgrade_wikis
+
       flash[:notice] = "Canceled subscription."
       redirect_to user_path(current_user)
   end

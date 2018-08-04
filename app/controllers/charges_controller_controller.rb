@@ -1,6 +1,4 @@
 class ChargesControllerController < ApplicationController
-skip_after_action :verify_policy_scoped, :only => :index
-
 
   def new
     amount = 15.00
