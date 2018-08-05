@@ -6,8 +6,7 @@ class User < ApplicationRecord
 
 
     after_initialize :set_default_role
-    #after_commit :downgrade_user_to_standard
-    #after_commit :current_user_downgrade_wikis
+    
 
     def public_wikis
         wikis.find(&:public?)

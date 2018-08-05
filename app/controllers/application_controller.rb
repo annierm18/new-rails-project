@@ -1,17 +1,18 @@
 class ApplicationController < ActionController::Base
   include Pundit
-  after_action :verify_authorized, except: :index
+  after_action :verify_authorized, except: :index, unless: :devise_controller?
   after_action :verify_policy_scoped, only: :index
   protect_from_forgery
   protect_from_forgery prepend: true
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
-  
+
 
 
   helper_method :user_signed_in?
   helper_method :current_user
   helper_method :user_session
+  
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 

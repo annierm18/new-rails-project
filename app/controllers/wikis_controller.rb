@@ -13,7 +13,7 @@ class WikisController < ApplicationController
 
 
   def index
-    @wikis = Wiki.public.order("created_at desc").where(current_user.following_ids)
+  #  @wikis = Wiki.public.order("created_at desc").where(current_user.following_ids)
     @wikis = WikiPolicy::Scope.new(current_user, Wiki).resolve
     @wikis = Wiki.all
     @wikis = policy_scope(Wiki)

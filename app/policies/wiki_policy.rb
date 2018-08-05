@@ -13,6 +13,7 @@ class WikiPolicy < ApplicationPolicy
     user.standard?
   end
 
+
   def resolve
       if user.standard?
         scope.all

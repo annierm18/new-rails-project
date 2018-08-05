@@ -6,6 +6,11 @@ class Wiki < ApplicationRecord
   validates :body, length: { minimum: 20 }, presence: true
   validates :user, presence: true
 
+  #scope :public, ->{ where(:private => false) }
+
+    def public?
+      private == true ? false : true
+    end
 
 
 
@@ -16,9 +21,5 @@ private
   end
 
 
-#  scope :public, ->{ where(:private => false) }
 
-  def public?
-    private == true ? false : true
-  end
 end
