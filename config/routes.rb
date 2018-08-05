@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
 
   get 'users/new'
+
+  #MarkdownExample::Application.routes.draw do
+  #resources :posts, only: [:index, :show]
+  #root to: "posts#index"
+#end
+
   resources :wikis do
     collection do
       get '/user_wikis', to: 'wikis#user_wikis', as: :user
