@@ -48,6 +48,8 @@ group :development, :test do
    gem 'rails-controller-testing'
 end
 
+#gem 'nokogiri', '~ 1.8.4'
+
 gem "pundit"
 
 gem 'faker'

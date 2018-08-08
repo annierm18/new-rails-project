@@ -12,6 +12,12 @@
     <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
   <% end %>
 
+  <% if user.role == 'premium' %>
+  <td><%= link_to 'Edit', edit_collaborator_path(@collaborator) %></td>
+      <td><%= link_to 'Destroy', collaborator, method: :delete, data: { confirm: 'Delete collaborator?' } %></td>
+      <td><%= link_to 'Create', collaborator, method: :delete, data: { confirm: 'Add collaborator?' } %></td>
+  <% end %>
+
   <div class="field">
     <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
     <%= f.password_field :password, autocomplete: "off" %>

@@ -1,12 +1,17 @@
 class User < ApplicationRecord
-    has_many :wikis, dependent: :destroy
+    has_many :wikis, through: :collaborators, dependent: :destroy
+    has_many :collaborators
+    delegate :wikis, to: :collaborators
 
     enum role: [:standard, :premium, :admin]
 
 
 
     after_initialize :set_default_role
-    
+
+    def collaborators
+      Collaborator.where(user_id: id)
+    end
 
     def public_wikis
         wikis.find(&:public?)
